@@ -3,7 +3,7 @@ My collection of trading indicator scripts for the Haasonline Trade Server
 
 # Indicators:
 ## MAMAFAMA 
-John Ehlers MAMA (MESA Advanced Moving Average) crossing with FAMA (Following Advanced Moving Average)
+John Ehlers MAMA (MESA Advanced Moving Average) crossing with FAMA (Following Advanced Moving Average)  
 MAMA indicator original paper: http://www.mesasoftware.com/papers/MAMA.pdf
 
 
