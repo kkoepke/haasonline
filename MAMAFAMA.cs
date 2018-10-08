@@ -2,6 +2,26 @@
 //  - TradeServer.ScriptingDriver.dll
 //  - TradeServer.Interfaces.dll
 //  - TA-Lib-Core.dll
+
+
+//
+// MAMA/FAMA 
+// John Ehlers MAMA(MESA Advanced Moving Average) crossing with FAMA(Following Advanced Moving Average)
+// Official MAMA indicator documentation: http://www.mesasoftware.com/papers/MAMA.pdf
+//
+// Implemented by Kai Köpke
+// 
+// Donations:
+// BTC 3NECzNiNQXsG1tbuqDBwev6HKhuAKGeMzJ
+// ETH 0x1b9018b382DB09BeE716fAa75688Dee709Fe3a3C
+//
+// More: https://github.com/kkoepke/haasonline
+//
+// Donations:
+// BTC 3NECzNiNQXsG1tbuqDBwev6HKhuAKGeMzJ
+// ETH 0x1b9018b382DB09BeE716fAa75688Dee709Fe3a3C
+//
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -89,6 +109,8 @@ public class ehlersMamaFama : IIndicatorScript
                 hl2[i] = (instrument.High[i] + instrument.Low[i])/2;
                 //hlc3[i] = (instrument.High[i] + instrument.Low[i] + instrument.Close[i]) / 3;
                 //ohlc4[i] = (instrument.Open[i] + instrument.High[i] + instrument.Low[i] + instrument.Close[i]) / 4;
+
+                // @todo: add more price sources to select
             }
 
             var mamaReturnCode = Core.Mama(0, position - 1, hl2, fastLimit, slowLimit, out outBegIdx, out outNBElement, outMAMA, outFAMA );
