@@ -36,9 +36,11 @@ public class ehlersMamaFama : IIndicatorScript
     //MAMA Parameters:
     double fastLimit = 0.5;
     double slowLimit = 0.05;
+    string sourceConfig = "hl2";
 
     double mama;
     double fama;
+
 
     public void Init()
     {
@@ -58,6 +60,7 @@ public class ehlersMamaFama : IIndicatorScript
     {
         var res = new List<ScriptParameter>
         {
+            new ScriptParameter("Price Source (o,h,l,c,hl2,hlc3,ohlc4)", ScriptParameterType.String, sourceConfig.ToString()),
             new ScriptParameter("Fast Limit", ScriptParameterType.Decimal, fastLimit.ToString()),
             new ScriptParameter("Slow Limit", ScriptParameterType.Decimal, slowLimit.ToString())
         };
@@ -66,6 +69,7 @@ public class ehlersMamaFama : IIndicatorScript
 
     public void SetParameters(Dictionary<string, object> parameters)
     {
+        sourceConfig = ParseString(parameters["Price Source (o,h,l,c,hl2,hlc3,ohlc4)"], sourceConfig);
         fastLimit = ParseDouble(parameters["Fast Limit"], fastLimit);
         slowLimit = ParseDouble(parameters["Slow Limit"], slowLimit);
     }
@@ -87,7 +91,6 @@ public class ehlersMamaFama : IIndicatorScript
             {
                 Convert.ToDecimal(mama),
                 Convert.ToDecimal(fama)
-                //Convert.ToDecimal(DC_delta)
             };
 
         return chartData;
@@ -101,19 +104,65 @@ public class ehlersMamaFama : IIndicatorScript
             double[] outMAMA = new double[position];
             double[] outFAMA = new double[position];
 
+            double[] o = new double[position];
+            double[] c = new double[position];
+            double[] h = new double[position];
+            double[] l = new double[position];
             double[] hl2 = new double[position];
-            //double[] hlc3 = new double[position];
-            //double[] ohlc4 = new double[position];
+            double[] hlc3 = new double[position];
+            double[] ohlc4 = new double[position];
+            double[] priceSource = new double[position];
+
             for (int i = 0; i < position; i++)
             {
+                o[i] = instrument.Open[i];
+                c[i] = instrument.Close[i];
+                h[i] = instrument.High[i];
+                l[i] = instrument.Low[i];
                 hl2[i] = (instrument.High[i] + instrument.Low[i])/2;
-                //hlc3[i] = (instrument.High[i] + instrument.Low[i] + instrument.Close[i]) / 3;
-                //ohlc4[i] = (instrument.Open[i] + instrument.High[i] + instrument.Low[i] + instrument.Close[i]) / 4;
-
-                // @todo: add more price sources to select
+                hlc3[i] = (instrument.High[i] + instrument.Low[i] + instrument.Close[i]) / 3;
+                ohlc4[i] = (instrument.Open[i] + instrument.High[i] + instrument.Low[i] + instrument.Close[i]) / 4;
             }
 
-            var mamaReturnCode = Core.Mama(0, position - 1, hl2, fastLimit, slowLimit, out outBegIdx, out outNBElement, outMAMA, outFAMA );
+            // priceSource = (double[])this.GetType().GetField(sourceConfig).GetValue(this);
+            // is not working. take this instead until i found a solution:
+
+            if (sourceConfig == "o")
+            {
+                priceSource = o;
+            }
+            else
+            if (sourceConfig == "c")
+            {
+                priceSource = c;
+            }
+            else
+            if (sourceConfig == "h")
+            {
+                priceSource = h;
+            }
+            else
+            if (sourceConfig == "l")
+            {
+                priceSource = l;
+            }
+            else
+            if (sourceConfig == "hl2")
+            {
+                priceSource = hl2;
+            }
+            else
+            if (sourceConfig == "hlc3")
+            {
+                priceSource = hlc3;
+            }
+            else
+            if (sourceConfig == "ohlc4")
+            {
+                priceSource = ohlc4;
+            }
+
+            var mamaReturnCode = Core.Mama(0, position - 1, priceSource, fastLimit, slowLimit, out outBegIdx, out outNBElement, outMAMA, outFAMA );
             //context.Logger.LogToFile("outNBElement: " + outNBElement); //Log to file
 
             if (mamaReturnCode == Core.RetCode.Success)
